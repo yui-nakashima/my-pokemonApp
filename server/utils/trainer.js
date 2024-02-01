@@ -14,7 +14,7 @@ const streamToString = (stream) =>
 /** トレーナーの一覧の取得 */
 export const findTrainers = async () => {
   const objects = await s3Client.send(
-    new ListObjectsCommand({ Bucket: config.bucketName }),
+    new ListObjectsCommand({ Bucket: "km-sd30-pokemon" }),
   );
   return objects.Contents ?? [];
 };
@@ -23,11 +23,12 @@ export const findTrainers = async () => {
 // TODO: トレーナーを取得する S3 クライアント処理の実装
 
 /** トレーナーの追加更新 */
+/** AWS s3にデータをアップロードする */
 export const upsertTrainer = async (name, trainer) => {
   const result = await s3Client.send(
     new PutObjectCommand({
-      Bucket: config.bucketName,
-      Key: `${name}.json`,
+      Bucket: config.bucketName, // バケット名
+      Key: `${name}.json`,       // ファイル名
       Body: JSON.stringify({ name: "", pokemons: [], ...trainer }),
     }),
   );
