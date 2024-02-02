@@ -1,5 +1,8 @@
-import { ListObjectsCommand, PutObjectCommand } from "@aws-sdk/client-s3";
+import { ListObjectsCommand, GetObjectCommand, PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import s3Client from "./s3Client";
+
+// コマンド参考
+// https://docs.aws.amazon.com/ja_jp/sdk-for-javascript/v3/developer-guide/javascript_s3_code_examples.html
 
 const config = useRuntimeConfig();
 
@@ -14,13 +17,20 @@ const streamToString = (stream) =>
 /** トレーナーの一覧の取得 */
 export const findTrainers = async () => {
   const objects = await s3Client.send(
-    new ListObjectsCommand({ Bucket: "km-sd30-pokemon" }),
+    new ListObjectsCommand({ Bucket: config.bucketName }),
   );
   return objects.Contents ?? [];
 };
 
 /** トレーナーの取得 */
 // TODO: トレーナーを取得する S3 クライアント処理の実装
+export const findTrainer = async () => {
+  const object = await s3Client.send(
+    new GetObjectCommand({ Bucket: config.bucketName, Key: "yui.json" }),
+  );
+  const trainer = JSON.parse(await streamToString(object.Body));
+  return trainer;
+};
 
 /** トレーナーの追加更新 */
 /** AWS s3にデータをアップロードする */
@@ -37,3 +47,10 @@ export const upsertTrainer = async (name, trainer) => {
 
 /** トレーナーの削除 */
 // TODO: トレーナーを削除する S3 クライアント処理の実装
+export const DeleteTrainer = async () => {
+  const result = await s3Client.send(
+    new DeleteObjectCommand({ Bucket: config.bucketName, Key: "yui.json" }),
+  );
+  console.log(result);
+  return result;
+};
