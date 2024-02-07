@@ -30,7 +30,7 @@ const onSubmit = async () => {
     }),
   }).catch((e) => e);
   if (response instanceof Error) return;
-  // router.push(`/trainer/${safeTrainerName.value}`);
+  router.push(`/trainer/${safeTrainerName.value}`);
 };
 
 </script>

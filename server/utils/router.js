@@ -19,19 +19,6 @@ router.get("/trainers", async (_req, res, next) => {
   }
 });
 
-/** トレーナーの追加 */
-// router.post("/trainer", async (req, res, next) => {
-//   try {
-//     // TODO: リクエストボディにトレーナー名が含まれていなければ400を返す
-//     if( !("name" in req.body && req.body.name.length > 0) )
-//       return res.status(400).send(req.body);
-//     // TODO: すでにトレーナー（S3 オブジェクト）が存在していれば409を返す
-//     const result = await upsertTrainer(req.body.name, req.body);
-//     res.status(result["$metadata"].httpStatusCode).send(result);
-//   } catch (err) {
-//     next(err);
-//   }
-// });
 router.post("/trainer", async (req, res, next) => {
   try {
     // TODO: リクエストボディにトレーナー名が含まれていなければ400を返す
@@ -52,7 +39,7 @@ router.post("/trainer", async (req, res, next) => {
 // TODO: トレーナーを取得する API エンドポイントの実装
 router.get("/trainer/:trainerName", async (req, res, next) => {
   try {
-    const trainer = await findTrainer();
+    const trainer = await findTrainer(req.params.trainerName);
     // TODO: 期待するレスポンスボディに変更する
     res.send(trainer);
   } catch (err) {
@@ -82,6 +69,7 @@ router.post("/trainer/:trainerName/pokemon", async (req, res, next) => {
     // TODO: リクエストボディにポケモン名が含まれていなければ400を返す
     const pokemon = await findPokemon(req.body.name);
     // TODO: 削除系 API エンドポイントを利用しないかぎりポケモンは保持する
+    // 追加
     const result = await upsertTrainer(trainerName, { pokemons: [pokemon] });
     res.status(result["$metadata"].httpStatusCode).send(result);
   } catch (err) {

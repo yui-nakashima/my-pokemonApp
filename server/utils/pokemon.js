@@ -4,3 +4,4 @@ export const findPokemon = async (name) => {
   const pokemon = await response.json();
   return pokemon;
 };
+

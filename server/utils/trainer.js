@@ -24,9 +24,9 @@ export const findTrainers = async () => {
 
 /** トレーナーの取得 */
 // TODO: トレーナーを取得する S3 クライアント処理の実装
-export const findTrainer = async () => {
+export const findTrainer = async (trainerName) => {
   const object = await s3Client.send(
-    new GetObjectCommand({ Bucket: config.bucketName, Key: "yui.json" }),
+    new GetObjectCommand({ Bucket: config.bucketName, Key: trainerName + ".json" }),
   );
   const trainer = JSON.parse(await streamToString(object.Body));
   return trainer;
