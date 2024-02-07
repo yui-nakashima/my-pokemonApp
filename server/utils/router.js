@@ -19,6 +19,7 @@ router.get("/trainers", async (_req, res, next) => {
   }
 });
 
+/** トレーナーの追加 */
 router.post("/trainer", async (req, res, next) => {
   try {
     // TODO: リクエストボディにトレーナー名が含まれていなければ400を返す
@@ -67,15 +68,21 @@ router.post("/trainer/:trainerName/pokemon", async (req, res, next) => {
   try {
     const { trainerName } = req.params;
     // TODO: リクエストボディにポケモン名が含まれていなければ400を返す
+    if (!("name" in req.body && req.body.name.length > 0))
+      return res.status(400).send("Not included pokemon name!");
     const pokemon = await findPokemon(req.body.name);
+    console.log(pokemon);
+    console.log("4");
     // TODO: 削除系 API エンドポイントを利用しないかぎりポケモンは保持する
     // 追加
     const result = await upsertTrainer(trainerName, { pokemons: [pokemon] });
+    console.log("5");
     res.status(result["$metadata"].httpStatusCode).send(result);
   } catch (err) {
     next(err);
   }
 });
+
 
 /** ポケモンの削除 */
 // TODO: ポケモンを削除する API エンドポイントの実装
