@@ -33,7 +33,8 @@ const moveCatch = () => {
 // 最初に必ず実行される
 onMounted(() => {
     const url = window.location.href; // 現在のURL取得
-    trainerName.value = decodeURI(url.slice(30,)); // 名前部分の切り出し
+    const tmp = url.split('/');
+    trainerName.value = decodeURI(tmp[tmp.length-1]); // 名前部分の切り出し
     getTrainer(); // トレーナーデータ取得
 })
 
