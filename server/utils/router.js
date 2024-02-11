@@ -67,16 +67,27 @@ router.post("/trainer/:trainerName", async (req, res, next) => {
 router.post("/trainer/:trainerName/pokemon", async (req, res, next) => {
   try {
     const { trainerName } = req.params;
+    // 現在の手持ちポケモンリストが必要
+    const trainer = await findTrainer(trainerName);
+    if (!("name" in req.body && req.body.name.length > 0))
+      return res.sendStatus(400);
     // TODO: リクエストボディにポケモン名が含まれていなければ400を返す
     if (!("name" in req.body && req.body.name.length > 0))
       return res.status(400).send("Not included pokemon name!");
-    const pokemon = await findPokemon(req.body.name);
-    console.log(pokemon);
-    console.log("4");
+    let pokemon = await findPokemon(req.body.name);
+    // 一部のデータを抜き出す
+    const { order, name, sprites: { front_default } } = pokemon;
+    pokemon = { order, name, sprites: { front_default } };
     // TODO: 削除系 API エンドポイントを利用しないかぎりポケモンは保持する
+    trainer.pokemons.push({
+      id: (trainer.pokemons[trainer.pokemons.length - 1]?.id ?? 0) + 1,
+      nickname: "",
+      order,
+      name,
+      sprites: {front_default},
+    });
     // 追加
-    const result = await upsertTrainer(trainerName, { pokemons: [pokemon] });
-    console.log("5");
+    const result = await upsertTrainer(trainerName, trainer);
     res.status(result["$metadata"].httpStatusCode).send(result);
   } catch (err) {
     next(err);

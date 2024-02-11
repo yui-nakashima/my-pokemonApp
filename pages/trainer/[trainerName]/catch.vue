@@ -31,6 +31,7 @@ const catchPokemon = async (pokemonName) => {
     }).catch((e) => e);
     if (response instanceof Error) return;
     // console.log(response.pokemons[0].name);
+    router.push(`/trainer/${trainerName.value}`);
 };
 
 // POST例 (new.vueより)
