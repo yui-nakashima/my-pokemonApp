@@ -15,9 +15,7 @@ const getTrainer = async () => {
         },
     }).catch((e) => e);
     if (response instanceof Error) return;
-    // console.log(response.pokemons[0].name);
     trainersPokemons.value = response.pokemons;
-    console.log("***" + trainersPokemons.value);
     isDisplay.value = true;
 };
 
@@ -30,11 +28,16 @@ const moveCatch = () => {
     router.push(`/trainer/${trainerName.value}/catch`);
 }
 
+// imgタグで変数を使用できないためURLに変換する関数
+const generateImgPath = (fileName) => {
+    return new URL(`${fileName}`, import.meta.url).href;
+}
+
 // 最初に必ず実行される
 onMounted(() => {
     const url = window.location.href; // 現在のURL取得
     const tmp = url.split('/');
-    trainerName.value = decodeURI(tmp[tmp.length-1]); // 名前部分の切り出し
+    trainerName.value = decodeURI(tmp[tmp.length - 1]); // 名前部分の切り出し
     getTrainer(); // トレーナーデータ取得
 })
 
@@ -58,8 +61,10 @@ onMounted(() => {
                 </div>
                 <div v-else>
                     <GamifyItem v-for="pokemon in trainersPokemons" :key="pokemon.ID">
-                    <p>{{ pokemon.name }}</p>
-                </GamifyItem>
+                        <img :src="generateImgPath(pokemon.sprites.front_default)"/>
+                        <p>{{ pokemon.name }}</p>
+                        <p>Lv.{{ pokemon.level }}</p>
+                    </GamifyItem>
                 </div>
             </GamifyList>
         </div>

@@ -3,17 +3,18 @@ const router = useRouter();
 const config = useRuntimeConfig();
 const trainerName = ref("");
 const isDisplay = ref(false); // 読み込み中はポケモンリストを表示しない
-const limit = ref(30);
+
+const limit = ref(200);
 // const offset = computed(() => page.value * limit.value);
 const { data: pokemons, refresh } = await useFetch(
-  () =>
-    // `https://pokeapi.co/api/v2/pokemon?offset=${offset.value}&limit=${limit.value}`,
-    `https://pokeapi.co/api/v2/pokemon?limit=${limit.value}`,
+    () =>
+        // `https://pokeapi.co/api/v2/pokemon?offset=${offset.value}&limit=${limit.value}`,
+        `https://pokeapi.co/api/v2/pokemon?limit=${limit.value}`,
     // `https://pokeapi.co/api/v2/pokemon`,
-  {
-    default: () => [],
-  },
-  isDisplay.value = true,
+    {
+        default: () => [],
+    },
+    isDisplay.value = true,
 );
 
 // ポケモンをつかまえる
@@ -30,33 +31,25 @@ const catchPokemon = async (pokemonName) => {
         }),
     }).catch((e) => e);
     if (response instanceof Error) return;
-    // console.log(response.pokemons[0].name);
     router.push(`/trainer/${trainerName.value}`);
 };
 
-// POST例 (new.vueより)
-// const onSubmit = async () => {
-//   const response = await $fetch("/api/trainer", {
-//     baseURL: config.public.backendOrigin,
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//     body: JSON.stringify({
-//       name: safeTrainerName.value,
-//     }),
-//   }).catch((e) => e);
-//   if (response instanceof Error) return;
-//   router.push(`/trainer/${safeTrainerName.value}`);
-// };
+// 画像取得
+// imgタグで変数を使用できないためURLに変換する関数
+const generateImgPath = async(pokemonName) => {
+    const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonName}`);
+    const pokemonData = await response.json();
 
-
+    const fileName = pokemonData.sprites.front_default;
+    // console.log(fileName);
+    return new URL(`${fileName}`, import.meta.url).href;
+}
 
 // 最初に必ず実行される
 onMounted(() => {
     const url = window.location.href; // 現在のURL取得
     const tmp = url.split('/');
-    trainerName.value = decodeURI(tmp[tmp.length-2]); // 名前部分の切り出し
+    trainerName.value = decodeURI(tmp[tmp.length - 2]); // 名前部分の切り出し
 })
 
 </script>
@@ -69,9 +62,11 @@ onMounted(() => {
             <GamifyList v-show="isDisplay">
                 <div>
                     <GamifyItem v-for="pokemon in pokemons.results" :key="pokemon.url">
-                    <p>{{ pokemon.name }}</p>
-                    <GamifyButton @click="catchPokemon(pokemon.name)">つかまえる</GamifyButton>
-                </GamifyItem>
+                        <img :src="generateImgPath(pokemon.name)"/>
+                        <!-- <p>{{ generateImgPath(pokemon.name) }}</p> -->
+                        <p>{{ pokemon.name }}</p>
+                        <GamifyButton @click="catchPokemon(pokemon.name)">つかまえる</GamifyButton>
+                    </GamifyItem>
                 </div>
             </GamifyList>
         </div>

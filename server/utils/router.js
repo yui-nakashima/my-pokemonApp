@@ -84,6 +84,7 @@ router.post("/trainer/:trainerName/pokemon", async (req, res, next) => {
       nickname: "",
       order,
       name,
+      level: 1,
       sprites: {front_default},
     });
     // 追加
