@@ -3,6 +3,7 @@ const router = useRouter();
 const config = useRuntimeConfig();
 const trainerName = ref("");
 const isDisplay = ref(false); // 読み込み中はポケモンリストを表示しない
+const { dialog, onOpen, onClose } = useDialog();
 
 const limit = ref(200);
 // const offset = computed(() => page.value * limit.value);
@@ -34,14 +35,11 @@ const catchPokemon = async (pokemonName) => {
     router.push(`/trainer/${trainerName.value}`);
 };
 
-// 画像取得
 // imgタグで変数を使用できないためURLに変換する関数
-const generateImgPath = async(pokemonName) => {
-    const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonName}`);
-    const pokemonData = await response.json();
-
-    const fileName = pokemonData.sprites.front_default;
-    // console.log(fileName);
+const generateImgPath = (pokeURL) => {
+    const tmp = pokeURL.split('/')
+    const num = tmp[tmp.length - 2];
+    const fileName = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${num}.png`
     return new URL(`${fileName}`, import.meta.url).href;
 }
 
@@ -62,13 +60,26 @@ onMounted(() => {
             <GamifyList v-show="isDisplay">
                 <div>
                     <GamifyItem v-for="pokemon in pokemons.results" :key="pokemon.url">
-                        <img :src="generateImgPath(pokemon.name)"/>
-                        <!-- <p>{{ generateImgPath(pokemon.name) }}</p> -->
-                        <p>{{ pokemon.name }}</p>
-                        <GamifyButton @click="catchPokemon(pokemon.name)">つかまえる</GamifyButton>
+                        <img :src="generateImgPath(pokemon.url)" />
+                        <span>{{ pokemon.name }}</span>
+                        <!-- <GamifyButton @click="catchPokemon(pokemon.name)">つかまえる</GamifyButton> -->
+                        <GamifyButton @click="onOpen(pokemon.name)">つかまえる</GamifyButton>
                     </GamifyItem>
                 </div>
             </GamifyList>
+        </div>
+        <div>
+            <GamifyDialog v-if="dialog != null" id="" title="かくにん" :description="`${dialog}を　なかまにする？`"
+                @close="onClose">
+                <GamifyList direction="horizon">
+                    <GamifyItem>
+                        <GamifyButton @click="catchPokemon(dialog)">はい</GamifyButton>
+                    </GamifyItem>
+                    <GamifyItem>
+                        <GamifyButton @click="onClose">いいえ</GamifyButton>
+                    </GamifyItem>
+                </GamifyList>
+            </GamifyDialog>
         </div>
     </div>
 </template>

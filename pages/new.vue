@@ -3,21 +3,8 @@ const router = useRouter();
 const config = useRuntimeConfig();
 const trainerName = ref("");
 const safeTrainerName = computed(() => trimAvoidCharacters(trainerName.value));
+const { dialog, onOpen, onClose } = useDialog();
 
-// const onSubmit = async () => {
-//   const response = await $fetch("/api/trainer", {
-//     baseURL: config.public.backendOrigin,
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//     body: JSON.stringify({
-//       name: trainerName.value,
-//     }),
-//   }).catch((e) => console.log(e));
-//   if (response instanceof Error) return;
-//   router.push(`/trainer/${safeTrainerName.value}`);
-// };
 const onSubmit = async () => {
   const response = await $fetch("/api/trainer", {
     baseURL: config.public.backendOrigin,
@@ -45,9 +32,18 @@ const onSubmit = async () => {
         <span id="name-description">とくていの　もじは　とりのぞかれるぞ！</span>
         <input id="name" v-model="trainerName" @keydown.enter="onOpen(true)" />
       </div>
-      <!-- <GamifyButton type="button" @click="onOpen(true)">けってい</GamifyButton> -->
-      <!-- 一旦直接送信 -->
-      <GamifyButton type="button" @click="onSubmit">けってい</GamifyButton>
+      <GamifyButton type="button" @click="onOpen(true)">けってい</GamifyButton>
+
+      <GamifyDialog v-if="dialog" id="" title="かくにん" :description="`ふむ・・・　きみは　${safeTrainerName}　と　いうんだな！`" @close="onClose">
+        <GamifyList  direction="horizon">
+          <GamifyItem>
+            <GamifyButton @click="onSubmit">はい</GamifyButton>
+          </GamifyItem>
+          <GamifyItem>
+            <GamifyButton @click="onClose">いいえ</GamifyButton>
+          </GamifyItem>
+        </GamifyList>
+      </GamifyDialog>
     </form>
 
   </div>
