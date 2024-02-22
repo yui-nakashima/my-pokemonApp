@@ -20,31 +20,42 @@ const onSubmit = async () => {
   router.push(`/trainer/${safeTrainerName.value}`);
 };
 
+// 画面遷移
+const movePage = (path) => {
+    router.push(path);
+}
+
 </script>
 
 <template>
   <div>
     <h1>あたらしくはじめる</h1>
-    <p>では　はじめに　きみの　なまえを　おしえて　もらおう！</p>
-    <form @submit.prevent>
-      <div>
-        <label for="name">なまえ</label>
-        <span id="name-description">とくていの　もじは　とりのぞかれるぞ！</span>
-        <input id="name" v-model="trainerName" @keydown.enter="onOpen(true)" />
-      </div>
-      <GamifyButton type="button" @click="onOpen(true)">けってい</GamifyButton>
+    <div>
+      <p>では　はじめに　きみの　なまえを　おしえて　もらおう！</p>
+      <form @submit.prevent>
+        <div>
+          <label for="name">なまえ</label>
+          <span id="name-description">とくていの　もじは　とりのぞかれるぞ！</span>
+          <input id="name" v-model="trainerName" />
+        </div>
+        <GamifyButton type="button" @click="onOpen(true)">けってい</GamifyButton>
 
-      <GamifyDialog v-if="dialog" id="" title="かくにん" :description="`ふむ・・・　きみは　${safeTrainerName}　と　いうんだな！`" @close="onClose">
-        <GamifyList  direction="horizon">
-          <GamifyItem>
-            <GamifyButton @click="onSubmit">はい</GamifyButton>
-          </GamifyItem>
-          <GamifyItem>
-            <GamifyButton @click="onClose">いいえ</GamifyButton>
-          </GamifyItem>
-        </GamifyList>
-      </GamifyDialog>
-    </form>
+        <GamifyDialog v-if="dialog" id="" title="かくにん" :description="`ふむ・・・　きみは　${safeTrainerName}　と　いうんだな！`"
+          @close="onClose">
+          <GamifyList direction="horizon">
+            <GamifyItem>
+              <GamifyButton @click="onSubmit">はい</GamifyButton>
+            </GamifyItem>
+            <GamifyItem>
+              <GamifyButton @click="onClose">いいえ</GamifyButton>
+            </GamifyItem>
+          </GamifyList>
+        </GamifyDialog>
+      </form>
+    </div>
+    <br>
+    <GamifyButton @click="movePage('/trainer')">つづきからはじめる</GamifyButton><br><br>
+    <GamifyButton @click="movePage('/')">さいしょにもどる</GamifyButton>
 
   </div>
 </template>

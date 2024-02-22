@@ -20,6 +20,11 @@ const getTrainers = async () => {
     trainersData.value = response;
 };
 
+// 画面遷移
+const movePage = (path) => {
+    router.push(path);
+}
+
 onMounted(() => {
     getTrainers();
 })
@@ -30,13 +35,13 @@ onMounted(() => {
     <div>
         <h1>つづきからはじめる</h1>
         <!-- <GamifyList v-for="trainer in getTrainers()" :key="trainer.ID"> -->
-        <GamifyButton @click="getTrainer">botan</GamifyButton>
         <GamifyList>
             <GamifyItem v-for="trainer in trainersData" :key="trainer.ID">
                 <NuxtLink :to="`trainer/${trainer.Key.slice(0, -5)}`">{{ trainer.Key.slice(0, -5) }}</NuxtLink>
             </GamifyItem>
         </GamifyList>
-
+        <GamifyButton @click="movePage('/new')">あたらしくはじめる</GamifyButton><br><br>
+        <GamifyButton @click="movePage('/')">さいしょにもどる</GamifyButton>
     </div>
 </template>
 

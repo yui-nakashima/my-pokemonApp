@@ -47,9 +47,9 @@ export const upsertTrainer = async (name, trainer) => {
 
 /** トレーナーの削除 */
 // TODO: トレーナーを削除する S3 クライアント処理の実装
-export const DeleteTrainer = async () => {
+export const DeleteTrainer = async (name) => {
   const result = await s3Client.send(
-    new DeleteObjectCommand({ Bucket: config.bucketName, Key: "yui.json" }),
+    new DeleteObjectCommand({ Bucket: config.bucketName, Key: `${name}.json` }),
   );
   console.log(result);
   return result;

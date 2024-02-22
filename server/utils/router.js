@@ -62,6 +62,16 @@ router.post("/trainer/:trainerName", async (req, res, next) => {
 
 /** トレーナーの削除 */
 // TODO: トレーナーを削除する API エンドポイントの実装
+router.delete("/trainer/:trainerName", async (req, res, next) => {
+  try {
+    const { trainerName } = req.params;
+    // TODO: トレーナーが存在していなければ404を返す
+    const result = await DeleteTrainer(trainerName);
+    res.status(result["$metadata"].httpStatusCode).send(result);
+  } catch (err) {
+    next(err);
+  }
+})
 
 /** ポケモンの追加 */
 router.post("/trainer/:trainerName/pokemon", async (req, res, next) => {

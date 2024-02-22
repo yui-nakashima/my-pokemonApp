@@ -4,6 +4,7 @@ const config = useRuntimeConfig();
 const trainerName = ref("");
 const trainersPokemons = ref("");
 const isDisplay = ref(false); // 読み込み中はポケモンリストを表示しない
+const { dialog, onOpen, onClose } = useDialog();
 
 // トレーナーデータ取得
 const getTrainer = async () => {
@@ -19,8 +20,20 @@ const getTrainer = async () => {
     isDisplay.value = true;
 };
 
-// マサラタウンに帰る
-const moveMasala = () => {
+// トレーナーデータ削除
+const delTrainer = async () => {
+    const response = await $fetch(`/api/trainer/${trainerName.value}`, {
+        baseURL: config.public.backendOrigin,
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    }).catch((e) => e);
+    router.push("/")
+}
+
+// マサラタウンに帰る（初期画面に遷移）
+const moveTop = () => {
     router.push("/")
 }
 
@@ -51,7 +64,7 @@ onMounted(() => {
             &nbsp;
             <p>{{ trainerName }}</p>
         </div>
-        <GamifyButton @click="moveMasala">マサラタウンに帰る</GamifyButton>
+        <GamifyButton @click="moveTop">マサラタウンに帰る</GamifyButton>
         <div>
             <h3>てもちポケモン</h3>
             <GamifyButton @click="moveCatch">ポケモンをつかまえる</GamifyButton>
@@ -61,12 +74,25 @@ onMounted(() => {
                 </div>
                 <div v-else>
                     <GamifyItem v-for="pokemon in trainersPokemons" :key="pokemon.ID">
-                        <img :src="generateImgPath(pokemon.sprites.front_default)"/>
+                        <img :src="generateImgPath(pokemon.sprites.front_default)" />
                         <p>{{ pokemon.name }}</p>
                         <p>Lv.{{ pokemon.level }}</p>
                     </GamifyItem>
                 </div>
             </GamifyList>
+        </div>
+        <div>
+            <GamifyButton @click="onOpen(true)">データをけす</GamifyButton>
+            <GamifyDialog v-if="dialog" id="" title="かくにん" :description="`ほんとうに　けしますか？`" @close="onClose">
+                <GamifyList direction="horizon">
+                    <GamifyItem>
+                        <GamifyButton @click="delTrainer">はい</GamifyButton>
+                    </GamifyItem>
+                    <GamifyItem>
+                        <GamifyButton @click="onClose">いいえ</GamifyButton>
+                    </GamifyItem>
+                </GamifyList>
+            </GamifyDialog>
         </div>
     </div>
 </template>
