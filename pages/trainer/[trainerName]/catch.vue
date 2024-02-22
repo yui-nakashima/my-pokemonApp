@@ -61,7 +61,7 @@ onMounted(() => {
                 <div>
                     <GamifyItem v-for="pokemon in pokemons.results" :key="pokemon.url">
                         <img :src="generateImgPath(pokemon.url)" />
-                        <span>{{ pokemon.name }}</span>
+                        <span class="pokemon-name">{{ pokemon.name }}</span>
                         <!-- <GamifyButton @click="catchPokemon(pokemon.name)">つかまえる</GamifyButton> -->
                         <GamifyButton @click="onOpen(pokemon.name)">つかまえる</GamifyButton>
                     </GamifyItem>

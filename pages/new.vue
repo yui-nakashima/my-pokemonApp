@@ -42,7 +42,7 @@ const movePage = (path) => {
 
         <GamifyDialog v-if="dialog" id="" title="かくにん" :description="`ふむ・・・　きみは　${safeTrainerName}　と　いうんだな！`"
           @close="onClose">
-          <GamifyList direction="horizon">
+          <GamifyList :border="false" :direction="horizon">
             <GamifyItem>
               <GamifyButton @click="onSubmit">はい</GamifyButton>
             </GamifyItem>

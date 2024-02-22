@@ -51,6 +51,5 @@ export const DeleteTrainer = async (name) => {
   const result = await s3Client.send(
     new DeleteObjectCommand({ Bucket: config.bucketName, Key: `${name}.json` }),
   );
-  console.log(result);
   return result;
 };

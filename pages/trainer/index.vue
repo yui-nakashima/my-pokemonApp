@@ -13,12 +13,10 @@ const getTrainers = async () => {
         },
     }).catch((e) => e);
     if (response instanceof Error) return;
-    // router.push(`/trainer/${safeTrainerName.value}`);
-    console.log(response[1]);
-    console.log(response[1].Key.slice(0, -5));
-
     trainersData.value = response;
 };
+
+
 
 // 画面遷移
 const movePage = (path) => {
