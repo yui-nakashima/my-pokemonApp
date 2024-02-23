@@ -4,19 +4,29 @@ const config = useRuntimeConfig();
 const trainerName = ref("");
 const isDisplay = ref(false); // 読み込み中はポケモンリストを表示しない
 const { dialog, onOpen, onClose } = useDialog();
-
+const page = ref(0);
 const limit = ref(200);
-// const offset = computed(() => page.value * limit.value);
+const offset = computed(() => page.value * limit.value);
 const { data: pokemons, refresh } = await useFetch(
     () =>
-        // `https://pokeapi.co/api/v2/pokemon?offset=${offset.value}&limit=${limit.value}`,
-        `https://pokeapi.co/api/v2/pokemon?limit=${limit.value}`,
-    // `https://pokeapi.co/api/v2/pokemon`,
+        `https://pokeapi.co/api/v2/pokemon?offset=${offset.value}&limit=${limit.value}`,
+    // `https://pokeapi.co/api/v2/pokemon?limit=${limit.value}`,
     {
         default: () => [],
     },
     isDisplay.value = true,
 );
+const hasPrev = computed(() => page.value > 0);
+const maxPage = computed(() => Math.floor(pokemons.value.count / limit.value));
+const hasNext = computed(() => page.value < maxPage.value);
+const onPrev = async () => {
+    page.value--;
+    await refresh();
+};
+const onNext = async () => {
+    page.value++;
+    await refresh();
+};
 
 // ポケモンをつかまえる
 // "/trainer/:trainerName/pokemon"
@@ -56,6 +66,7 @@ onMounted(() => {
     <div>
         <h1>ポケモンをつかまえる</h1>
         <p>{{ pokemons.count }} しゅるいのポケモン</p>
+        <p>{{ page + 1 }} / {{ maxPage + 1 }} ページ</p>
         <div>
             <GamifyList v-show="isDisplay">
                 <div>
@@ -69,8 +80,7 @@ onMounted(() => {
             </GamifyList>
         </div>
         <div>
-            <GamifyDialog v-if="dialog != null" id="" title="かくにん" :description="`${dialog}を　なかまにする？`"
-                @close="onClose">
+            <GamifyDialog v-if="dialog != null" id="" title="かくにん" :description="`${dialog}を　なかまにする？`" @close="onClose">
                 <GamifyList direction="horizon">
                     <GamifyItem>
                         <GamifyButton @click="catchPokemon(dialog)">はい</GamifyButton>
@@ -80,6 +90,19 @@ onMounted(() => {
                     </GamifyItem>
                 </GamifyList>
             </GamifyDialog>
+        </div>
+        <div>
+            <GamifyList direction="horizon">
+                <GamifyItem>
+                    <GamifyButton :disabled="!hasPrev" @click="onPrev">まえへ</GamifyButton>
+                </GamifyItem>
+                <GamifyItem>
+                    <span>{{ page+1 }} / {{ maxPage+1 }} ページ</span>
+                </GamifyItem>
+                <GamifyItem>
+                    <GamifyButton :disabled="!hasNext" @click="onNext">つぎへ</GamifyButton>
+                </GamifyItem>
+            </GamifyList>
         </div>
     </div>
 </template>

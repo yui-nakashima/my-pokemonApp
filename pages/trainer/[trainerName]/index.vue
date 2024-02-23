@@ -23,18 +23,6 @@ const {
 } = useDialog();
 
 // トレーナーデータ取得
-// const getTrainer = async () => {
-//     const response = await $fetch(`/api/trainer/${trainerName.value}`, {
-//         baseURL: config.public.backendOrigin,
-//         method: "GET",
-//         headers: {
-//             "Content-Type": "application/json",
-//         },
-//     }).catch((e) => e);
-//     if (response instanceof Error) return;
-//     trainersPokemons.value = response.pokemons;
-//     isDisplay.value = true;
-// };
 const getTrainer = async () => {
     const response = await $fetch(`/api/trainer/${trainerName.value}`, {
         baseURL: config.public.backendOrigin,
