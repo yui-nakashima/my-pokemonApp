@@ -85,15 +85,6 @@ const delPokemon = async (pokemonID) => {
     window.location.reload();
 }
 
-// 画面遷移
-const movePage = (path) => {
-    router.push(path)
-}
-
-const moveCatch = () => {
-    router.push(`/trainer/${trainerName.value}/catch`);
-}
-
 // imgタグで変数を使用できないためURLに変換する関数
 const generateImgPath = (fileName) => {
     return new URL(`${fileName}`, import.meta.url).href;
@@ -116,10 +107,10 @@ onMounted(() => {
             <img src="/avatar.png" />
             <span>{{ trainerName }}</span>
         </div>
-        <GamifyButton @click="movePage('/')">マサラタウンに帰る</GamifyButton>
+        <GamifyButton @click="onOpenDelete(true)">マサラタウンにかえる</GamifyButton>
         <div>
             <h3>てもちポケモン</h3>
-            <GamifyButton @click="moveCatch">ポケモンをつかまえる</GamifyButton>
+            <CatchButton :to="`/trainer/${trainerName}/catch`">ポケモンをつかまえる</CatchButton>
             <GamifyList v-show="isDisplay">
                 <div v-if="trainersPokemons == ''">
                     <p>ポケモンがいません</p>
@@ -163,8 +154,7 @@ onMounted(() => {
                 </GamifyList>
             </GamifyDialog>
 
-            <GamifyButton @click="onOpenDelete(true)">データをけす</GamifyButton>
-            <GamifyDialog v-if="deleteDialog" id="confirm-DELETE-trainer" title="かくにん" :description="`ほんとうに　けしますか？`"
+            <GamifyDialog v-if="deleteDialog" id="confirm-DELETE-trainer" title="かくにん" :description="`データが　きえます。\nほんとうに　かえりますか？`"
                 @close="onCloseDelete">
                 <GamifyList :border="false" direction="horizon">
                     <GamifyItem>
